@@ -1,0 +1,53 @@
+# Microsoft Entra Privileged Access Lifecycle Example
+# This YAML defines privileged role assignments, PIM settings, and access reviews.
+# Parameterized for reusability and version control.
+
+privilegedRoles:
+  - name: "Global Administrator"
+    eligibleUsers:
+      - "alice@contoso.com"
+      - "bob@contoso.com"
+    pimSettings:
+      activation:
+        requiredMfa: true
+        justificationRequired: true
+        maxActivationDurationHours: 4
+      notification:
+        onActivation: true
+        recipients:
+          - "security@contoso.com"
+      approval:
+        required: true
+        approvers:
+          - "CISO"
+    accessReview:
+      enabled: true
+      frequency: "Monthly"
+      reviewers:
+        - "CISO"
+      actionOnDenied: "RemoveEligibility"
+  - name: "Privileged Role Administrator"
+    eligibleUsers:
+      - "carol@contoso.com"
+    pimSettings:
+      activation:
+        requiredMfa: true
+        justificationRequired: true
+        maxActivationDurationHours: 2
+      notification:
+        onActivation: true
+        recipients:
+          - "security@contoso.com"
+      approval:
+        required: false
+    accessReview:
+      enabled: true
+      frequency: "Quarterly"
+      reviewers:
+        - "CISO"
+      actionOnDenied: "RemoveEligibility"
+
+# Parameterization example:
+parameters:
+  defaultActivationDurationHours: 2
+  defaultReviewer: "CISO"

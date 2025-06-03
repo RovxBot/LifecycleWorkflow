@@ -1,0 +1,11 @@
+# Access review definitions for privileged roles
+accessReviews:
+  - name: "Monthly PIM Role Review"
+    description: "Monthly review of all privileged role assignments"
+    frequency: "Monthly"
+    reviewers:
+      - "IT Admin"
+      - "Security Officer"
+    targetRoles:
+      - "Global Administrator"
+      - "Privileged Role Administrator"

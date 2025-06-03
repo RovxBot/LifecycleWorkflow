@@ -1,0 +1,43 @@
+# Microsoft Entra Role-Based Access Assignment Example
+# This YAML defines job roles and automated access assignment logic.
+# Parameterized for reusability and version control.
+
+roles:
+  - name: Sales
+    description: "Sales team members"
+    access:
+      groups:
+        - "Sales Team"
+      applications:
+        - "CRM"
+    assignmentRule:
+      type: DynamicGroup
+      rule: "user.department -eq 'Sales'"
+  - name: Engineering
+    description: "Engineering team members"
+    access:
+      groups:
+        - "Engineering Team"
+        - "Developers"
+      applications:
+        - "DevOps"
+        - "SourceControl"
+    assignmentRule:
+      type: DynamicGroup
+      rule: "user.department -eq 'Engineering'"
+  - name: HR
+    description: "Human Resources"
+    access:
+      groups:
+        - "HR Team"
+      applications:
+        - "HRIS"
+    assignmentRule:
+      type: DynamicGroup
+      rule: "user.department -eq 'HR'"
+
+# Parameterization example:
+parameters:
+  defaultRole: "Employee"
+  defaultGroups:
+    - "All Employees"

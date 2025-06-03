@@ -1,0 +1,45 @@
+# Microsoft Entra Lifecycle Workflow Example: User Offboarding
+# This YAML defines an offboarding workflow for departing users.
+# Parameterized for reusability and version control.
+
+workflow:
+  name: UserOffboarding
+  description: |
+    Automates offboarding for terminated employees.
+    - Disables user accounts
+    - Removes licenses and group memberships
+    - Notifies manager and IT
+  trigger:
+    type: AttributeChange
+    attribute: employeeStatus
+    value: "Terminated"
+  parameters:
+    notificationEmailTemplate: "templates/termination_notice.html"
+    gracePeriodDays: 7
+  steps:
+    - name: DisableUser
+      action: DisableAccount
+      inputs:
+        gracePeriod: ${{ parameters.gracePeriodDays }}
+    - name: RemoveGroups
+      action: RemoveFromAllGroups
+      inputs: {}
+    - name: RemoveLicense
+      action: RemoveAllLicenses
+      inputs: {}
+    - name: NotifyManager
+      action: SendEmail
+      inputs:
+        to: ${{ user.manager }}
+        template: ${{ parameters.notificationEmailTemplate }}
+        subject: "Employee Offboarding Notification"
+    - name: NotifyIT
+      action: SendEmail
+      inputs:
+        to: "it-support@example.com"
+        template: ${{ parameters.notificationEmailTemplate }}
+        subject: "User Account Scheduled for Deletion"
+    - name: HybridSyncToEntra
+      action: TriggerHybridSync
+      inputs:
+        description: "Ensure AD Connect hybrid sync is triggered to update Entra ID after offboarding steps."

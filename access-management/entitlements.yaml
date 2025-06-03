@@ -1,0 +1,14 @@
+# Entitlement definitions for access management
+entitlements:
+  - name: "Standard Access"
+    description: "Default access package for employees"
+    groups:
+      - "Employees"
+    roles:
+      - "User"
+  - name: "Manager Access"
+    description: "Elevated access for managers"
+    groups:
+      - "Managers"
+    roles:
+      - "Manager"

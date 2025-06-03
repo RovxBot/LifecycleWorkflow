@@ -1,0 +1,76 @@
+# Microsoft Entra Lifecycle Workflow Example: User Onboarding
+# This YAML defines an onboarding workflow for new users.
+# Parameterized for reusability and version control.
+
+workflow:
+  name: UserOnboarding
+  description: |
+    Automates onboarding for new employees.
+    - Provisions user accounts
+    - Assigns licenses and groups
+    - Sends welcome email
+  # Triggered when employeeHireDate is set (best practice for onboarding)
+  trigger:
+    type: AttributeChange
+    attribute: employeeHireDate
+    condition: IsNotNull  # Triggers when hire date is set
+    # Optionally, add a delay to trigger X days before/after hire date if needed
+  # Scope: Only applies to users in the 'Active Employees' group and with userType 'Member'
+  scope:
+    filter:
+      - property: userType
+        operator: Equals
+        value: "Member"
+      - property: accountEnabled
+        operator: Equals
+        value: true
+  parameters:
+    defaultGroups:
+      - "All Employees"
+      - "Office365 Users"
+    licenseSku: "ENTERPRISEPACK"
+    welcomeEmailTemplate: "templates/welcome.html"
+  steps:
+    - name: ProvisionUser
+      action: CreateUser
+      inputs:
+        source: HRSystem
+        # Explicit attribute mapping for SCIM compliance
+        attributeMappings:
+          userName: mail
+          displayName: displayName
+          emails:
+            - type: work
+              value: mail
+          title: jobTitle
+          department: department
+        # Add other SCIM attributes as needed
+    - name: AssignGroups
+      action: AddToGroups
+      inputs:
+        groups: ${{ parameters.defaultGroups }}
+    - name: AssignAppGroups
+      action: RunScript
+      inputs:
+        script: onboarding/scripts/onboarding.ps1
+        description: "Assigns user to application access and privileged role groups based on user details."
+    - name: AssignLicense
+      action: AssignLicense
+      inputs:
+        sku: ${{ parameters.licenseSku }}
+    - name: SendWelcomeEmail
+      action: SendEmail
+      inputs:
+        to: ${{ user.mail }}
+        template: ${{ parameters.welcomeEmailTemplate }}
+        cc: ${{ user.manager }}
+        subject: "Welcome to the Company!"
+    - name: CustomOnboardingTask
+      action: CustomTaskExtension
+      inputs:
+        # Logic App integration for additional onboarding automation
+        extensionId: "logicApp-onboarding-task"
+        payload:
+          userId: ${{ user.id }}
+          hireDate: ${{ user.employeeHireDate }}
+        # See https://learn.microsoft.com/en-us/entra/id-governance/trigger-custom-task

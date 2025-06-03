@@ -1,0 +1,17 @@
+# Access review definitions for access management
+accessReviews:
+  - name: "Quarterly Employee Access Review"
+    description: "Review all employee access to sensitive resources every quarter"
+    frequency: "Quarterly"
+    reviewers:
+      - "Manager"
+      - "IT Admin"
+    targetGroups:
+      - "Employees"
+  - name: "Guest User Access Review"
+    description: "Monthly review of guest user access"
+    frequency: "Monthly"
+    reviewers:
+      - "IT Admin"
+    targetGroups:
+      - "Guests"

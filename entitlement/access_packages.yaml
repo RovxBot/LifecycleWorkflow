@@ -1,0 +1,55 @@
+# Microsoft Entra Access Lifecycle Management Example
+# This YAML defines access packages, assignment/expiration policies, and access reviews.
+# Parameterized for reusability and version control.
+
+accessPackages:
+  - name: "SalesAppAccess"
+    description: "Access to Sales applications and resources"
+    resources:
+      groups:
+        - "Sales Team"
+      applications:
+        - "CRM"
+    assignmentPolicy:
+      requestorEligibility: "AllEmployees"
+      approvalRequired: true
+      approvers:
+        - "Sales Manager"
+      expiration:
+        type: "Days"
+        value: 90
+      autoRenew: false
+    accessReview:
+      enabled: true
+      frequency: "Quarterly"
+      reviewers:
+        - "Sales Manager"
+      actionOnDenied: "RemoveAccess"
+  - name: "EngineeringAppAccess"
+    description: "Access to Engineering applications and resources"
+    resources:
+      groups:
+        - "Engineering Team"
+      applications:
+        - "DevOps"
+        - "SourceControl"
+    assignmentPolicy:
+      requestorEligibility: "AllEmployees"
+      approvalRequired: true
+      approvers:
+        - "Engineering Manager"
+      expiration:
+        type: "Days"
+        value: 180
+      autoRenew: true
+    accessReview:
+      enabled: true
+      frequency: "SemiAnnual"
+      reviewers:
+        - "Engineering Manager"
+      actionOnDenied: "RemoveAccess"
+
+# Parameterization example:
+parameters:
+  defaultExpirationDays: 90
+  defaultReviewFrequency: "Quarterly"

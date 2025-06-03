@@ -1,0 +1,14 @@
+# Privileged Identity Management (PIM) configuration
+pimRoles:
+  - name: "Global Administrator"
+    eligibleUsers:
+      - "it-admin@example.com"
+    assignmentType: "Eligible"
+    approvalRequired: true
+    maxActivationDuration: "8:00"
+  - name: "Privileged Role Administrator"
+    eligibleUsers:
+      - "security@example.com"
+    assignmentType: "Eligible"
+    approvalRequired: true
+    maxActivationDuration: "4:00"

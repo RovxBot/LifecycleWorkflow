@@ -1,0 +1,4 @@
+# Test environment parameters
+environment: "test"
+notificationEmail: "test-it@example.com"
+enableTestUsers: true

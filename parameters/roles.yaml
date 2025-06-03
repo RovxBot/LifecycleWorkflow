@@ -1,0 +1,10 @@
+# Role definitions for Entra Lifecycle Management
+roles:
+  - name: "User"
+    description: "Standard user with basic access"
+  - name: "Manager"
+    description: "Manager with approval rights"
+  - name: "IT Admin"
+    description: "Full administrative privileges"
+  - name: "Guest"
+    description: "External collaborator with limited access"

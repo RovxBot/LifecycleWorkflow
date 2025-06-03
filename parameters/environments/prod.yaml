@@ -1,0 +1,4 @@
+# Production environment parameters
+environment: "prod"
+notificationEmail: "it-admin@example.com"
+enableTestUsers: false

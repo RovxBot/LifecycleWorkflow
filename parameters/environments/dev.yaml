@@ -1,0 +1,4 @@
+# Development environment parameters
+environment: "dev"
+notificationEmail: "dev-it@example.com"
+enableTestUsers: true

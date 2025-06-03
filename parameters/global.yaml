@@ -1,0 +1,5 @@
+# Global parameters for Entra Lifecycle Management
+tenantId: "<YOUR_TENANT_ID>"
+companyName: "ExampleCorp"
+defaultLocation: "Australia East"
+notificationEmail: "it-admin@example.com"

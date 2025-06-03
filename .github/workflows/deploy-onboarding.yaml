@@ -1,0 +1,76 @@
+name: Deploy Onboarding Workflow to Entra
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  deploy-onboarding:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Employment Hero → Entra API-driven Inbound Provisioning
+      - name: Sync Employment Hero workforce data to Entra via API-driven provisioning
+        shell: pwsh
+        env:
+          EMPLOYMENT_HERO_API_KEY: ${{ secrets.EMPLOYMENT_HERO_API_KEY }}
+          # Set these secrets in your repo for secure automation
+          ENTRA_BULKUPLOAD_ENDPOINT: ${{ secrets.ENTRA_BULKUPLOAD_ENDPOINT }}
+          ENTRA_BULKUPLOAD_TOKEN: ${{ secrets.ENTRA_BULKUPLOAD_TOKEN }}
+        run: |
+          # Reference: https://learn.microsoft.com/en-us/entra/identity/app-provisioning/inbound-provisioning-api-concepts#end-to-end-flow
+          # This step extracts data from Employment Hero, transforms it to SCIM, and uploads to Entra's /bulkUpload endpoint.
+          # See onboarding/scripts/employment-hero-to-entra-bulkupload.ps1 for implementation details.
+          $ErrorActionPreference = "Stop"
+          & onboarding/scripts/employment-hero-to-entra-bulkupload.ps1 `
+            -EmploymentHeroApiKey $env:EMPLOYMENT_HERO_API_KEY `
+            -BulkUploadEndpoint $env:ENTRA_BULKUPLOAD_ENDPOINT `
+            -BearerToken $env:ENTRA_BULKUPLOAD_TOKEN
+
+      - name: Install Microsoft Graph PowerShell
+        shell: pwsh
+        run: |
+          Install-Module Microsoft.Graph -Force -Scope CurrentUser
+
+      - name: Authenticate to Microsoft Graph
+        shell: pwsh
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        run: |
+          $SecureSecret = ConvertTo-SecureString $env:AZURE_CLIENT_SECRET -AsPlainText -Force
+          $Credential = New-Object System.Management.Automation.PSCredential($env:AZURE_CLIENT_ID, $SecureSecret)
+          Connect-MgGraph -ClientId $env:AZURE_CLIENT_ID -TenantId $env:AZURE_TENANT_ID -ClientSecret $env:AZURE_CLIENT_SECRET
+
+      - name: Deploy onboarding.yaml to Entra Lifecycle Workflows
+        shell: pwsh
+        run: |
+          # Reference: https://learn.microsoft.com/en-us/graph/api/resources/identitygovernance-lifecycleworkflows-overview
+          # Replace with actual deployment logic as per Entra API/PowerShell requirements
+          $workflowPath = "workflows/onboarding.yaml"
+          # Example: Import YAML, convert to JSON, and call Graph API (pseudo-code)
+          $yaml = Get-Content $workflowPath | Out-String
+          # Convert YAML to JSON if needed (requires module)
+          # $json = ConvertFrom-Yaml $yaml | ConvertTo-Json
+          # Use Microsoft Graph API to update/create workflow
+          # Invoke-MgGraphRequest -Method PUT -Uri "https://graph.microsoft.com/beta/identityGovernance/lifecycleWorkflows/workflows/{workflowId}" -Body $json
+
+          Write-Host "Deployment step placeholder. Implement actual deployment logic as per Entra documentation."
+
+      - name: Verify portal configuration matches code
+        shell: pwsh
+        run: |
+          # Fetch current workflow config from Entra and compare to onboarding.yaml
+          # Example: Get workflow from Graph API and diff with local file
+          # $remote = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/beta/identityGovernance/lifecycleWorkflows/workflows/{workflowId}"
+          # Compare-Object -ReferenceObject (Get-Content workflows/onboarding.yaml) -DifferenceObject $remote
+          Write-Host "Verification step placeholder. Implement comparison logic as per Entra documentation."
+
+# Documentation:
+# - Entra Lifecycle Workflows: https://learn.microsoft.com/en-us/entra/identity/governance/lifecycle-workflows-overview
+# - Microsoft Graph PowerShell: https://learn.microsoft.com/en-us/powershell/microsoftgraph/overview
+# - GitHub Actions: https://docs.github.com/en/actions
