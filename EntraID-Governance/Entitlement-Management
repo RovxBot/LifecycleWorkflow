@@ -1,0 +1,34 @@
+# Entitlement Management
+
+## Licensing
+- Microsoft Entra ID P2
+
+- Security group used to manage access to the entitlement management features.
+- Example:
+    - Marketing Resources > Has users assigned to it > granting access to Marketing recources access package/.
+
+![Users and Groups](Images/UsersAndGroups.png)
+
+- Access package to create a bundle of resources that can be assigned users via user request or direct assignemnt by an admin.
+![Access Package](Images/Access-Package.png)
+
+- You can add the following:
+    - Groups and Teams
+    - Applications
+    - SharePoint Sites
+
+- You can add request features to the access package:
+    - For users in the directory
+    - For users no in your directory
+    - None (admin direct assignemnts only)
+
+![Access Package Requests](Images/Access-Package-Request.png)
+
+- You can set up a full approval flow similar to PIM
+- Set up the lifecycle of the access package:
+    - Duration of access
+    - Expiration of access
+    - Users being able to request a custom timeframe
+
+
+
